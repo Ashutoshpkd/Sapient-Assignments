@@ -1,0 +1,20 @@
+mkdir -p rs1 rs2 rs3
+mongod --replSet yogi --logpath "1.log" --dbpath rs1 --port 27017 &
+mongod --replSet yogi --logpath "2.log" --dbpath rs2 --port 27018 &
+mongod --replSet yogi --logpath "3.log" --dbpath rs3 --port 27019
+
+config = {_id : "yogi", members :[
+{
+	_id : 0, host : "localhost:27017},
+	{_id : 1 host : "localhost:27018},
+	{_id : 0, host : "localhost:27017}]
+	}
+
+rs.initiate(config)
+
+mongo --host yogi/localhost:27017,localhost:27018,localhost:27019
+
+db.isMaster()
+rs.slaveOk()
+
+db.rs1.find()
